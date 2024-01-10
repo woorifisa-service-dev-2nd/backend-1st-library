@@ -3,21 +3,26 @@ package library.dev.application;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
-import java.util.logging.Filter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 public class Application {
     static Logger logger = Logger.getLogger(Application.class.getName());
     FileReader fileReader = new FileReader();
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    public Application () {
+    public Application () throws IOException {
         Filter inputFilter = (logRecord) -> logRecord.getMessage().contains("INPUT") || logRecord.getLevel().equals(Level.WARNING);
+        Formatter formatter = new SimpleFormatter();
+        String fileDate = new SimpleDateFormat("_yyyyMMdd").format(new Date());
+        Handler handler = new FileHandler("logFiles/"+fileDate+"-library.log");
+        handler.setFormatter(formatter);
         logger.setFilter(inputFilter);
+        logger.addHandler(handler);
     }
     public void numberOne() {
         logger.info("numberOne() is called");
@@ -31,7 +36,7 @@ public class Application {
         String name = null;
         try {
             name = br.readLine();
-            logger.fine("[INPUT DATA] name = "+name);
+            logger.info("[INPUT DATA] name = "+name);
         } catch (IOException e) {
             logger.warning("IOException occured while using BufferedReader");
             throw new RuntimeException(e);
@@ -82,7 +87,7 @@ public class Application {
         String category = null;
         try {
             category = br.readLine();
-            logger.fine("[INPUT DATA] category = "+ category);
+            logger.info("[INPUT DATA] category = "+ category);
         } catch (IOException e) {
             logger.warning("IOException occured while using BufferedReader");
             throw new RuntimeException(e);
